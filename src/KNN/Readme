@@ -3,40 +3,41 @@ K-NN Classifier
 
 [Name]: KNN
 [Contact Person]: lucasmsp@dcc.ufmg.br
-[Access Level]: public
 [Platform]: COMPSs
 
 [Body]
+
 == Description ==
 
 K Nearest Neighbors (KNN) is a non-parametric method used for classification and regression. In k-NN classification, an object is classified by a majority vote of its neighbors, with the object being assigned to the class most common among its k nearest neighbors (k is a positive integer, typically small). If k = 1, then the object is simply assigned to the class of that single nearest neighbor.
 
 The optimal choice of the value k is highly data-dependent: in general a larger k suppresses the effects of noise, but makes the classification boundaries less distinct.
 
+The algorithm reads a dataset composed by labels and features (numeric fields), each record by line like the pattern: label,feature1,feature2, ..., featureN
+
 
 == Versions ==
-There are two versions of KNN, depending on the file's system where the data was stored.
+There are two versions of KNN, depending on the file system where the data was stored.
 == Version 1 ==
-''files'', where the files are stored as usual.
+''files'', where the files are stored in the usual file system.
 == Version 2 ==
 ''HDFS'', where the files are stored in the HDFS.
 
 
 == Execution instructions ==
 Usage:
-runcompss KNN.files.KNN    -K <K value> -f <num frag> -t <train datafile> -v <test datafile>
-runcompss KNN.HDFS.KNNHDFS -K <K value> -f <num frag> -t <train datafile> -v <test datafile>
+runcompss KNN.files.KNN    -K <K_value> -f <num_frag> -t <train_datafile> -v <test_datafile>
+runcompss KNN.HDFS.KNNHDFS -K <K_value> -t <train_datafile> -v <test_datafile>
 
 
 where:
-		 * - K value: integer number used into the classification
-		 * - num frag: number of nodes used on the execution
-		 * - train datafile: File's path used to train the model
-		 * - test datafile: File's path to classification
+		 * - K_value: integer number used into the classification
+		 * - num_frag: (only in version 1, because the data in HDFS is already splitted) number of nodes used on the execution
+		 * - train_datafile: File's path used to train the model
+		 * - test_datafile: File's path to classification
 
 
 == Execution Example ==
-runcompss 	KNN.HDFS.KnnHDFS -K 3 -f 2  -t /user/hdfs/train_data.csv -v /user/hdfs/test_data.csv
-
-
+runcompss 	KNN.HDFS.KnnHDFS -K 3 -t /user/hdfs/train_data.csv -v /user/hdfs/test_data.csv
+runcompss 	KNN.HDFS.KnnHDFS -K 3 -f 2  -t train_data.csv -v test_data.csv
 

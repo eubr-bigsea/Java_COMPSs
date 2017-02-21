@@ -25,18 +25,37 @@ public interface KnnHDFSItf {
                     Samples s
     );
 
+    //void ClassifyBlock(Samples test_blk, Block b1, Candidate partial_result, int K)
     @Method(declaringClass = "KNN.HDFS.KnnHDFS")
     void ClassifyBlock(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
                     Samples test_blk,
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
-                    ArrayList<Block> FILE_TRAIN_SPLITS,
+                    Block b1,
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.INOUT)
-                    Samples partial_result,
+                    Candidate partial_result,
             @Parameter( direction = Parameter.Direction.IN)
                     int K
     );
 
+
+    @Method(declaringClass = "KNN.HDFS.KnnHDFS")
+    Candidate merge(
+            @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
+                    Candidate  result,
+            @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
+                    Candidate  partial_result,
+            @Parameter (direction = Parameter.Direction.IN)
+                    int K
+    );
+
+    @Method(declaringClass = "KNN.HDFS.KnnHDFS")
+    double[] getKN(
+            @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.INOUT)
+                    Candidate neighborhood,
+            @Parameter (direction = Parameter.Direction.IN)
+                    int K
+    );
 
     @Method(declaringClass = "KNN.HDFS.KnnHDFS")
     void accumulate_error(
@@ -52,7 +71,7 @@ public interface KnnHDFSItf {
             @Parameter (direction = Parameter.Direction.IN)
                     Samples part,
             @Parameter (direction = Parameter.Direction.IN)
-                    Samples partial,
+                    double[] partial,
             @Parameter (direction = Parameter.Direction.INOUT)
                     int[] correct
     );
