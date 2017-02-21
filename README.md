@@ -14,6 +14,8 @@ In this repository there are the following algorithms:
 6. SVM with HDFS;
 
 
+
+
 ## How to compile
 
 Fist of all, it's necessary to import the [HDFS's integration](https://github.com/eubr-bigsea/compss-hdfs) into the project. 
@@ -28,3 +30,4 @@ Before execute a code, remember to start the HDFS:
 > $HADOOP_PATH/sbin/start-dfs.sh
 
 After that, just use runcompss as usual.
+

@@ -1,32 +1,32 @@
-package KNNHDFS;
+package SVM.HDFS;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  *
  * Created by Lucas Miguel S Ponce.
  * Student of master degree in Computer's Science
  * UFMG - 1/2017
- * Algorithm:  k-NN (K Nearst Neighborhood) using data of HDFS
+ * Algorithm:  SVM using data from HDFS
  *
  */
 
-public class Samples implements Serializable {
-
-    public ArrayList<double[]> Features = new ArrayList<double[]>();
-    public ArrayList<Integer>  Labels  = new ArrayList<Integer>();
 
 
-    public Samples() { }
+import java.io.Serializable;
+import java.util.ArrayList;
 
-    public void setFeatures(ArrayList<double[]> features) {
-        Features = features;
+public class Sample implements Serializable{
+
+    public ArrayList<double[]> Features;
+    public ArrayList<Integer> Labels;
+
+
+    public Sample() {
     }
+
     public ArrayList<double[]> getFeatures() {
         return Features;
     }
-
     public double getFeature(int m,int d){
         return Features.get(m)[d];
     }
@@ -37,7 +37,9 @@ public class Samples implements Serializable {
         return Labels.get(d);
     }
 
-
+    public void setFeatures(ArrayList<double[]> features) {
+        Features = features;
+    }
 
     public void start(){
         Labels = new ArrayList<Integer>();
@@ -45,7 +47,7 @@ public class Samples implements Serializable {
     }
 
     public void addLabels(int l){
-        if (Labels == null) //DELETE
+        if (Labels == null)
             Labels = new ArrayList<Integer>();
 
         Labels.add(l);
@@ -65,10 +67,8 @@ public class Samples implements Serializable {
         Labels = labels;
     }
 
-    public int getSizebyLabels(){
+    public int getSize(){
         return Labels.size();
-    }
-    public int getSizebyFeatures(){
-        return Features.size();
+
     }
 }

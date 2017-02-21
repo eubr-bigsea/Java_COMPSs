@@ -1,4 +1,4 @@
-package SVM;
+package SVM.files;
 
 
 /**
@@ -108,7 +108,7 @@ public class SVM {
 
         long estimatedTime = System.nanoTime() - startTime;
         double seconds = (double)estimatedTime / 1000000000.0;
-        System.out.printf("predict_chunck -> Time elapsed: %.2f seconds\n\n",seconds);
+        System.out.printf("[INFO] - predict_chunck -> Time elapsed: %.2f seconds\n\n",seconds);
 
         return label_result;
     }

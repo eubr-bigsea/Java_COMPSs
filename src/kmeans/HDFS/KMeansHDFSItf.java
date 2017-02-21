@@ -1,5 +1,5 @@
 
-package kmeansHDFS;
+package kmeans.HDFS;
 
 
 
@@ -12,14 +12,14 @@ import integration.Block;
 public interface KMeansHDFSItf {
 
 
-	@Method(declaringClass = "kmeansHDFS.KMeansHDFS")
+	@Method(declaringClass = "KMeansHDFS")
 	void read(
 			@Parameter(type = Parameter.Type.OBJECT, direction = Direction.IN) Block blk,
 			@Parameter(direction = Direction.IN) int numDimensions,
 			@Parameter(type = Parameter.Type.OBJECT, direction = Direction.INOUT) Fragment Point
 	);
 
-	@Method(declaringClass = "kmeansHDFS.KMeansHDFS")
+	@Method(declaringClass = "KMeansHDFS")
 	void computeNewLocalClusters(
 			@Parameter
 					int myK,
@@ -35,7 +35,7 @@ public interface KMeansHDFSItf {
 					int[] clusterCounts
 	);
 
-	@Method(declaringClass = "kmeansHDFS.KMeansHDFS")
+	@Method(declaringClass = "KMeansHDFS")
 	void accumulate(
 			@Parameter(direction = Direction.INOUT)
 					float[] onePoints,
@@ -47,7 +47,7 @@ public interface KMeansHDFSItf {
 					int[] otherCounts
 	);
 
-	@Method(declaringClass = "kmeansHDFS.KMeansHDFS")
+	@Method(declaringClass = "KMeansHDFS")
     float[] initPointsFrag(
 			@Parameter
 					int oneCounts,

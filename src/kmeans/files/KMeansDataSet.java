@@ -1,4 +1,4 @@
-package kmeans;
+package kmeans.files;
 
 /*
  *  Copyright 2002-2015 Barcelona Supercomputing Center (www.bsc.es)
@@ -21,7 +21,7 @@ import java.io.*;
 
 /**
  * A class to encapsulate an input set of 
- * Points for use in the kmeansHDFS program and the
+ * Points for use in the kmeans.files.HDFS program and the
  * reading/writing of a set of points to data files.
  */
 

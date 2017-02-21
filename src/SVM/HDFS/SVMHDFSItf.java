@@ -1,4 +1,4 @@
-package SVMHDFS;
+package SVM.HDFS;
 
 
 /**
@@ -17,7 +17,7 @@ import integration.Block;
 
 public interface SVMHDFSItf {
 
-    @Method(declaringClass = "SVMHDFS.SVMHDFS")
+    @Method(declaringClass = "SVM.HDFS.SVM.HDFS")
     Sample loadfileFromHDFS(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
                     Block blk,
@@ -26,7 +26,7 @@ public interface SVMHDFSItf {
     );
 
 
-    @Method(declaringClass = "SVMHDFS.SVMHDFS")
+    @Method(declaringClass = "SVM.HDFS.SVM.HDFS")
     void calc_yp(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
             Sample XY,
@@ -40,7 +40,7 @@ public interface SVMHDFSItf {
             Sample s
     );
 
-    @Method(declaringClass = "SVMHDFS.SVMHDFS")
+    @Method(declaringClass = "SVM.HDFS.SVM.HDFS")
     Sample predict_chunck(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
                     Sample XY,
@@ -49,7 +49,7 @@ public interface SVMHDFSItf {
 
     );
 
-    @Method(declaringClass = "SVMHDFS.SVMHDFS")
+    @Method(declaringClass = "SVM.HDFS.SVM.HDFS")
     void accumulate_cost(
             @Parameter( direction = Parameter.Direction.INOUT)
                     double[] COST,
@@ -57,7 +57,7 @@ public interface SVMHDFSItf {
                     double[] COST2
     );
 
-    @Method(declaringClass = "SVMHDFS.SVMHDFS")
+    @Method(declaringClass = "SVM.HDFS.SVM.HDFS")
     void accumulate_grad(
             @Parameter( direction = Parameter.Direction.INOUT)
             double[] grad,
@@ -66,14 +66,14 @@ public interface SVMHDFSItf {
 
     );
 
-    @Method(declaringClass = "SVMHDFS.SVMHDFS")
+    @Method(declaringClass = "SVM.HDFS.SVM.HDFS")
     void  accumulate_error(
             @Parameter( direction = Parameter.Direction.INOUT) int[] ACC,
             @Parameter( direction = Parameter.Direction.INOUT) int[] ACC2
     );
 
 
-    @Method(declaringClass = "SVMHDFS.SVMHDFS")
+    @Method(declaringClass = "SVM.HDFS.SVM.HDFS")
     void updateWeight(
             @Parameter(direction = Parameter.Direction.IN)
                     double lr,
@@ -83,7 +83,7 @@ public interface SVMHDFSItf {
                     double [] w
     );
 
-    @Method(declaringClass = "SVMHDFS.SVMHDFS")
+    @Method(declaringClass = "SVM.HDFS.SVM.HDFS")
     void verify (
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN) Sample labels_result,
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN) Sample test,
@@ -92,7 +92,7 @@ public interface SVMHDFSItf {
 
 
 
-    @Method(declaringClass = "SVMHDFS.SVMHDFS")
+    @Method(declaringClass = "SVM.HDFS.SVM.HDFS")
     void partial_grad(
             @Parameter(direction = Parameter.Direction.IN) int numDim,
             @Parameter(direction = Parameter.Direction.IN) Sample yp,

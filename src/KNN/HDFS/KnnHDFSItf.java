@@ -1,4 +1,4 @@
-package KNNHDFS;
+package KNN.HDFS;
 
 import integratedtoolkit.types.annotations.Parameter;
 import integratedtoolkit.types.annotations.task.Method;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public interface KnnHDFSItf {
 
 
-    @Method(declaringClass = "KNNHDFS.KnnHDFS")
+    @Method(declaringClass = "KNN.HDFS.KnnHDFS")
     void readBlockFromHDFS(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
                     Block blk,
@@ -25,7 +25,7 @@ public interface KnnHDFSItf {
                     Samples s
     );
 
-    @Method(declaringClass = "KNNHDFS.KnnHDFS")
+    @Method(declaringClass = "KNN.HDFS.KnnHDFS")
     void ClassifyBlock(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
                     Samples test_blk,
@@ -38,7 +38,7 @@ public interface KnnHDFSItf {
     );
 
 
-    @Method(declaringClass = "KNNHDFS.KnnHDFS")
+    @Method(declaringClass = "KNN.HDFS.KnnHDFS")
     void accumulate_error(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.INOUT)
                     int[] correct,
@@ -47,7 +47,7 @@ public interface KnnHDFSItf {
 
     );
 
-    @Method(declaringClass = "KNNHDFS.KnnHDFS")
+    @Method(declaringClass = "KNN.HDFS.KnnHDFS")
     void evaluateFrag(
             @Parameter (direction = Parameter.Direction.IN)
                     Samples part,

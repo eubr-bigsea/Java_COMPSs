@@ -1,4 +1,4 @@
-package KNN;
+package KNN.files;
 
 import java.io.Serializable;
 
