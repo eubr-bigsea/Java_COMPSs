@@ -1,4 +1,4 @@
-package SVMHDFS;
+package SVM.HDFS;
 
 
 /**
@@ -74,7 +74,7 @@ public class SVMHDFS {
             return train;
 
         }catch (Exception e) {
-            System.out.println("ERROR - SVMHDFS.loadfileFromHDFS");
+            System.out.println("ERROR - SVM.HDFS.loadfileFromHDFS");
             e.printStackTrace();
         }
         return null;

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package kmeans;
+package kmeans.files;
 
 
 import integratedtoolkit.types.annotations.Parameter;
@@ -23,7 +23,7 @@ import integratedtoolkit.types.annotations.task.Method;
 
 public interface KMeansItf {
 
-	@Method(declaringClass = "kmeans.KMeans")
+	@Method(declaringClass = "kmeans.files.KMeans")
 	void computeNewLocalClusters(
 		@Parameter
 		int myK,
@@ -39,7 +39,7 @@ public interface KMeansItf {
 		int[] clusterCounts
 	);
 
-	@Method(declaringClass = "kmeans.KMeans")
+	@Method(declaringClass = "kmeans.files.KMeans")
 	void accumulate(
 		@Parameter(direction = Direction.INOUT)
 		float[] onePoints,

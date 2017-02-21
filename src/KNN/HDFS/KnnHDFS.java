@@ -1,4 +1,4 @@
-package KNNHDFS;
+package KNN.HDFS;
 
 /**
  *
@@ -147,14 +147,14 @@ public class KnnHDFS {
         return popular;
     }
 
-    public static int distance(double[] a, double[] b) {
+    public static double distance(double[] a, double[] b) {
 
         int sum = 0;
         for(int i = 0; i < a.length; i++) {
             sum += (a[i] - b[i]) * (a[i] - b[i]);
         }
 
-        return (int) Math.sqrt(sum); // euclidian distance would be sqrt(sum)...
+        return  Math.sqrt(sum); // euclidian distance would be sqrt(sum)... (int)
     }
 
 
@@ -184,23 +184,29 @@ public class KnnHDFS {
 
     public static void main(String[] args) {
 
-        int K = 3;
+        int frag = 2;
+        int K = 1;
+        String trainingSet_name     =  "";
+        String validationSet_name   = "";
         String defaultFS = System.getenv("MASTER_HADOOP_URL");
-        String trainingSet_name     =  "/user/pdm2/higgs-train-0.1m.csv";
-        String validationSet_name   = "/user/pdm2/higgs-test-0.1m.csv";
-
 
         // Get and parse arguments
         int argIndex = 0;
         while (argIndex < args.length) {
             String arg = args[argIndex++];
-            if (arg.equals("-t")) {
-                trainingSet_name  = args[argIndex++];
-            } else if (arg.equals("-v")) {
-                validationSet_name  = args[argIndex++];
-            } else if (arg.equals("-K")) {
+            if (arg.equals("-K")) {
                 K = Integer.parseInt(args[argIndex++]);
+            } else if (arg.equals("-f")) {
+                frag = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-t")) {
+                trainingSet_name = args[argIndex++];
+            }else if (arg.equals("-v")) {
+                validationSet_name = args[argIndex++];
             }
+        }
+        if (trainingSet_name.equals("") || validationSet_name.equals("")){
+            System.out.println("[ERROR] - You need to choose a file to train and test");
+            System.exit(0);
         }
 
 

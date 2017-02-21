@@ -1,4 +1,4 @@
-package SVM;
+package SVM.files;
 
 
 /**
@@ -20,7 +20,7 @@ public interface SVMItf {
 
 
     //calc_yp(double[] ypp, double COST[], double[][] X, int[] label, double[] w, int numDim )
-    @Method(declaringClass = "SVM.SVM") //, isModifier=true, priority=true)
+    @Method(declaringClass = "SVM.files.SVM") //, isModifier=true, priority=true)
     void calc_yp(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.INOUT)
                     double[] ypp,
@@ -38,7 +38,7 @@ public interface SVMItf {
 
 
     //partial_grad(double[] grad_p,int numDim, double[] yp, double[][] train_features, int[] train_labels)
-    @Method(declaringClass = "SVM.SVM")
+    @Method(declaringClass = "SVM.files.SVM")
     void  partial_grad(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.INOUT)
                 double[] grad_p,
@@ -52,7 +52,7 @@ public interface SVMItf {
                 int[] train_labels
     );
 
-    @Method(declaringClass = "SVM.SVM")
+    @Method(declaringClass = "SVM.files.SVM")
     void accumulate_cost(
             @Parameter( direction = Parameter.Direction.INOUT)
                     double[] COST,
@@ -60,7 +60,7 @@ public interface SVMItf {
                     double[] COST2
     );
 
-    @Method(declaringClass = "SVM.SVM")
+    @Method(declaringClass = "SVM.files.SVM")
     void accumulate_grad(
             @Parameter( direction = Parameter.Direction.INOUT)
                     double[] grad,
@@ -69,7 +69,7 @@ public interface SVMItf {
 
     );
 
-    @Method(declaringClass = "SVM.SVM")
+    @Method(declaringClass = "SVM.files.SVM")
     void updateWeight(
             @Parameter(direction = Parameter.Direction.IN)
             double lr,
@@ -80,7 +80,7 @@ public interface SVMItf {
     );
 
 
-    @Method(declaringClass = "SVM.SVM")
+    @Method(declaringClass = "SVM.files.SVM")
     void  accumulate_error(
             @Parameter( direction = Parameter.Direction.INOUT) int[] ACC,
             @Parameter( direction = Parameter.Direction.INOUT) int[] ACC2
@@ -88,7 +88,7 @@ public interface SVMItf {
 
 
 
-    @Method(declaringClass = "SVM.SVM")
+    @Method(declaringClass = "SVM.files.SVM")
     int[] predict_chunck(
             @Parameter(type = Parameter.Type.OBJECT,  direction = Parameter.Direction.IN) int[] testY,
             @Parameter(type = Parameter.Type.OBJECT,  direction = Parameter.Direction.IN)  double[][] testX,
@@ -96,7 +96,7 @@ public interface SVMItf {
     );
 
 
-    @Method(declaringClass = "SVM.SVM")
+    @Method(declaringClass = "SVM.files.SVM")
     void verify (
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN) int[] labels_result,
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN) int[] test,

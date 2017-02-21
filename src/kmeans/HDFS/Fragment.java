@@ -1,4 +1,4 @@
-package kmeansHDFS;
+package kmeans.HDFS;
 
 import java.io.Serializable;
 
