@@ -13,7 +13,7 @@ K Nearest Neighbors (KNN) is a non-parametric method used for classification and
 
 The optimal choice of the value k is highly data-dependent: in general a larger k suppresses the effects of noise, but makes the classification boundaries less distinct.
 
-The algorithm reads a dataset composed by labels and features (numeric fields), each record by line like the pattern: label,feature1,feature2, ..., featureN
+The algorithm reads a dataset composed by labels and features (numeric fields), each record by line as the pattern: label,feature1,feature2, ..., featureN
 
 
 == Versions ==
