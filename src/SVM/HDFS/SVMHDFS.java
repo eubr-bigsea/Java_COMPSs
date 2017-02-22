@@ -207,10 +207,46 @@ public class SVMHDFS {
 
           ###########################################*/
 
-        String trainFile = "/user/pdm2/higgs-train-0.1m.csv";
-        String testFile = "/user/pdm2/higgs-train-0.1m.csv";
-        int sizeTest = 100000;
+        String trainFile = "";
+        String testFile =  "";
         int numDim = 28;
+
+        //SVM's parameters
+        double lambda = 0.001;      // Coefficient for Penalty part  (regularization parameter) -> 0 to +inf
+        double lr = 0.0001;         // Learning rate parameter
+        double threshold = 0.001;   // Cost's threshold -> Tolerance for stopping criterion
+        int maxIters = 3;
+
+        // Get and parse arguments
+        int argIndex = 0;
+        while (argIndex < args.length) {
+            String arg = args[argIndex++];
+            if (arg.equals("-c")) {
+                lambda = Double.parseDouble(args[argIndex++]);
+            }else if (arg.equals("-lr")) {
+                lr = Double.parseDouble(args[argIndex++]);
+            }else if (arg.equals("-thr")) {
+                threshold = Double.parseDouble(args[argIndex++]);
+            }else if (arg.equals("-nd")) {
+                numDim = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-i")) {
+                maxIters = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-t")) {
+                trainFile = args[argIndex++];
+            }else if (arg.equals("-v")) {
+                testFile = args[argIndex++];
+            }
+        }
+
+        System.out.println("Running SVM.HDFS with the following parameters:");
+        System.out.println("- Lambda: " + lambda);
+        System.out.println("- Learning rate: " + lr);
+        System.out.println("- Threshold: " + threshold);
+        System.out.println("- Iterations: " + maxIters);
+        System.out.println("- Dimensions: " + numDim);
+        System.out.println("- Train Points: " + trainFile);
+        System.out.println("- Test Points: " + testFile+"\n");
+
 
         //Finding the list of blocks
         String defaultFS = System.getenv("MASTER_HADOOP_URL");
@@ -223,11 +259,6 @@ public class SVMHDFS {
 
         Sample[] train = new Sample[numFrag1];
         Sample[] test  = new Sample[numFrag2];
-
-        double lambda = 0.001; //0.0001;
-        double lr = 0.0001; //0.001;
-        double threshold = 0.001;
-        int maxIters = 3;
 
 
         for(int f=0; f<numFrag1;f++)
@@ -245,14 +276,12 @@ public class SVMHDFS {
 
 
         double[]        w = new double[numDim];
-        double       cost = 0;
         double[][] grad_p = new double[numFrag1][numDim];
-        Sample[] yp       = new Sample[numFrag1];
+        Sample[]       yp = new Sample[numFrag1];
         double[][]   COST = new double[numFrag1][2];
-        int[][]       ACC = new int[numFrag2][2];
+        int   [][]    ACC = new int[numFrag2][2];
 
         for(int iter=0;iter<maxIters;iter++){
-
 
             //Calc yp
             for (int f=0;f<numFrag1;f++) {

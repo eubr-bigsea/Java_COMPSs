@@ -288,11 +288,11 @@ public class Knn {
 
          */
 
-        System.out.println("Running with the following parameters:");
-        System.out.println("- K: " + K);
+        System.out.println("Running Knn.files with the following parameters:");
+        System.out.println("- K Neighborhood: " + K);
         System.out.println("- Nodes: " + frag);
         System.out.println("- Training set: " + trainingName);
-        System.out.println("- Test set: " + testName);
+        System.out.println("- Test set: " + testName+"\n");
 
         ArrayList<Sample> trainingSet   = readFile(trainingName);   //Only in Master
         ArrayList<Sample> TestSet       = readFile(testName);       //Only in Master
@@ -304,8 +304,6 @@ public class Knn {
         int i;
 
         int[][] numcorrect = new int[frag][1]; //only to compute
-
-
         Candidate [][][] partial_result = new Candidate[frag][frag][TestSize/frag];
         Candidate c = new Candidate();
         c.setK(K+1);

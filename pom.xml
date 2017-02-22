@@ -11,7 +11,7 @@
 
 	<packaging>jar</packaging>
 	<name>COMPSs - LMSP</name>
-	<description>KMeans application</description>
+	<description>Some algorithms developed in Java COMPSs with or without using the HDFS's API developed in this project.</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

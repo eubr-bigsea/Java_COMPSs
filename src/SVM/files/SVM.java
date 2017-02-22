@@ -11,7 +11,6 @@ package SVM.files;
  */
 
 
-
 import java.io.*;
 import java.util.StringTokenizer;
 
@@ -22,11 +21,14 @@ public class SVM {
         long startTime = System.nanoTime();
         double cost =0;
 
+
         for(int m=0;m<X.length;m++){
             ypp[m]=0;
+            //Inner product: w * x
             for(int d=0;d<numDim;d++)
                 ypp[m]+=X[m][d]*w[d];
 
+            //Empirical loss
             if (label[m]*ypp[m]-1< 0) {
                 cost += (1 - label[m] * ypp[m]);
             }
@@ -44,6 +46,7 @@ public class SVM {
     public static void  partial_grad(double[] grad_p,int numDim, double[] yp, double[][] train_features, int[] train_labels){
 
         long startTime = System.nanoTime();
+        // ∇(j) =  w.r.t. w(j)
 
         for(int d=0;d<numDim;d++) {
             grad_p[d] = 0;
@@ -116,6 +119,7 @@ public class SVM {
 
     public static void  updateWeight(double lr, double[] grad_p,double [] w){
 
+        //w(j) ← w(j) - η ∇J(j)(xi)
         for(int d=0;d<w.length;d++){
             w[d] -= lr*grad_p[d];
         }
@@ -171,6 +175,8 @@ public class SVM {
     }
 
     public static void main(String[] args) {
+        //http://snap.stanford.edu/class/cs246-2015/slides/13-svm.pdf
+
 
         /*###########################################
 
@@ -179,9 +185,9 @@ public class SVM {
           ###########################################*/
 
         //SVM's parameters
-        double lambda = 0.001;
-        double lr = 0.0001;
-        double threshold = 0.001;
+        double lambda = 0.001;      // Coefficient for Penalty part  (regularization parameter) -> 0 to +inf
+        double lr = 0.0001;         // Learning rate parameter
+        double threshold = 0.001;   // Cost's threshold -> Tolerance for stopping criterion
         int maxIters = 3;
 
         //Dataset's parameters
@@ -189,11 +195,55 @@ public class SVM {
         int sizeTrain = 100000;
         int sizeTest  = 100000;
         int numFrag = 2;
+        String trainFile = "";
+        String testFile = "";
+
+        // Get and parse arguments
+        int argIndex = 0;
+        while (argIndex < args.length) {
+            String arg = args[argIndex++];
+            if (arg.equals("-c")) {
+                lambda = Double.parseDouble(args[argIndex++]);
+            }else if (arg.equals("-lr")) {
+                lr = Double.parseDouble(args[argIndex++]);
+            }else if (arg.equals("-thr")) {
+                threshold = Double.parseDouble(args[argIndex++]);
+            }else if (arg.equals("-nd")) {
+                numDim = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-nt")) {
+                sizeTrain  = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-nv")) {
+                sizeTest = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-i")) {
+                maxIters = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-f")) {
+                numFrag = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-t")) {
+                trainFile = args[argIndex++];
+            }else if (arg.equals("-v")) {
+                testFile = args[argIndex++];
+            }
+        }
+        if (trainFile.equals("") || testFile.equals("")){
+            System.out.println("[ERROR] - You need to choose a file to train and test");
+            System.exit(0);
+        }
+
+        System.out.println("Running SVM.files with the following parameters:");
+        System.out.println("- Lambda: " + lambda);
+        System.out.println("- Learning rate: " + lr);
+        System.out.println("- Threshold: " + threshold);
+        System.out.println("- Iterations: " + maxIters);
+        System.out.println("- Dimensions: " + numDim);
+        System.out.println("- Nodes: " + numFrag);
+        System.out.println("- Train Points: " + trainFile + " - numPoints: "+sizeTrain);
+        System.out.println("- Test Points: " + testFile + " - numPoints: "+sizeTest);
+
+
 
         int sizeTrainPerFrag = (int) Math.floor((float)sizeTrain/numFrag);
         int[][] train_labels = new int[numFrag][sizeTrainPerFrag];
         double[][][] train_features = new double[numFrag][sizeTrainPerFrag][numDim];
-        String trainFile = "/media/lucasmsp/Dados/TEMP/Dataset/higgs-train-0.1m.csv";
 
         loadfile_and_split(train_features,train_labels,trainFile, sizeTrainPerFrag,sizeTrain);
 
@@ -205,11 +255,11 @@ public class SVM {
          ########################################*/
 
 
-        double[]      w = new double[numDim];
-        double[][] COST = new double[numFrag][2];
-        int[][]     ACC = new int[numFrag][2];
-        double[][] grad_p = new double[numFrag][numDim];
-        double[][] yp     = new double[numFrag][sizeTrainPerFrag];
+        double[]        w = new double[numDim];           // Array of weights that are assigned to individual  samples
+        double[][]   COST = new double[numFrag][2];       // Cost of each partition
+        double[][] grad_p = new double[numFrag][numDim];  // gradient ∇(j) w.r.t. w(j)
+        double[][]     yp = new double[numFrag][sizeTrainPerFrag];
+        int   [][]    ACC = new int[numFrag][2];
 
         for(int iter=0;iter<maxIters;iter++){
 
@@ -258,19 +308,14 @@ public class SVM {
 
          ########################################*/
 
-        train_labels    =  null;
-        train_features  =  null;
-
         int sizeTestPerFrag = (int) Math.floor((float)sizeTest/numFrag);
         int[][] test_labels = new int[sizeTest][sizeTestPerFrag];
         double[][][] test_features = new double[sizeTest][sizeTestPerFrag][numDim];
-        String testFile = "/media/lucasmsp/Dados/TEMP/Dataset/higgs-train-0.1m.csv";
+        int[][] labels_result = new int[numFrag][sizeTestPerFrag];
+
 
         loadfile_and_split(test_features,test_labels,testFile,sizeTestPerFrag,sizeTest);
 
-
-        int error=0;
-        int[][] labels_result = new int[numFrag][sizeTestPerFrag];
 
         //Parallel
         for (int f =0; f<numFrag;f++) {
