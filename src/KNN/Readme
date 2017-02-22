@@ -39,5 +39,5 @@ where:
 
 == Execution Example ==
 runcompss 	KNN.HDFS.KnnHDFS -K 3 -t /user/hdfs/train_data.csv -v /user/hdfs/test_data.csv
-runcompss 	KNN.HDFS.KnnHDFS -K 3 -f 2  -t train_data.csv -v test_data.csv
+runcompss 	KNN.files.KNN    -K 3 -f 2  -t train_data.csv -v test_data.csv
 
