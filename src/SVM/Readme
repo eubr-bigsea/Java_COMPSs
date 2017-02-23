@@ -33,8 +33,8 @@ runcompss SVM.files.SVM   -c  <c_value> -lf <lf_value>  -thr <threshold> -i <max
                           -nd <num_dim> -nt <size_train> -nv <size_test> \
                           -f  <num_frag> -t <train_datafile> -v <test_datafile>
 
-runcompss SVM.HDFS.SVMHDFS -c <c_value> -lf <lf_value>  -thr <threshold> -i <maxIter> \
-                          -nd <num_dim> -t  <train_datafile> -v <test_datafile>
+runcompss SVM.HDFS.SVMHDFS -c  <c_value> -lf <lf_value>  -thr <threshold> -i <maxIter> \
+                           -nd <num_dim> -t  <train_datafile> -v <test_datafile>
 
 
 where:
@@ -54,6 +54,6 @@ where:
 runcompss 	KNN.HDFS.KnnHDFS -c 0.001 -lr 0.0001 -thr 0.001 -nd 28 -i 3 \
                              -t /user/hdfs/train_data.csv -v /user/hdfs/test_data.csv
 
-runcompss 	KNN.files.Knn    -c 0.001 -lr 0.0001 -thr 0.001 -nd 28 -i 3 -f 2 -nt 100000 -nv 100000 \
-                             -t train_data.csv -v test_data.csv 
+runcompss 	KNN.files.Knn    -c 0.001 -lr 0.0001 -thr 0.001 -nd 28 -i 3 -f 2 \
+							 -nt 100000 -nv 100000 -t train_data.csv -v test_data.csv 
 

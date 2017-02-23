@@ -1,6 +1,6 @@
 # Java COMPSs Algorithms
 
-Some algorithms developed in Java COMPSs with or without using the HDFS's API developed in this project.
+Some algorithms developed in Java COMPSs with or without using the [HDFS's API](https://github.com/eubr-bigsea/compss-hdfs) developed in this project.
 
 
 -----
@@ -16,9 +16,20 @@ There are two versions to each algorithm, one version using files as input and o
 
 ## How to compile
 
-Fist of all, it's necessary to import the [HDFS's integration](https://github.com/eubr-bigsea/compss-hdfs) into the project. 
+Fist of all, it's necessary to import the HDFS's integration into the project. 
 
-Second, compile it. If you prefer use Maven, you can use the `pom.xml` file in this project.
+
+
+In order to compile your code using Maven, you can use the `pom.xml`file in this project:
+
+1. Download the [HDFS_Integration.jar](https://github.com/eubr-bigsea/compss-hdfs);
+2. Create a Maven local repository using the command:
+
+	mvn install:install-file -Dfile=HDFS_Integration.jar -DgroupId=HDFS_Integration -	DartifactId=HDFS_Integration -Dversion=1.0 -Dpackaging=jar
+
+3. Compile it using the [pom.xml](https://github.com/eubr-bigsea/Java_COMPSs/blob/master/pom.xml).
+
+
 
 
 ## How to Run a Application
