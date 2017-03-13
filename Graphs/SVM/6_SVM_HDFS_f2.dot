@@ -1,0 +1,355 @@
+digraph {
+  rankdir=TB;
+  labeljust="l";
+  subgraph dependence_graph {
+    ranksep=0.20;
+    node[height=0.75];
+
+1[shape=circle, style=filled fillcolor="#0000ff" fontcolor="#ffffff"];
+2[shape=circle, style=filled fillcolor="#0000ff" fontcolor="#ffffff"];
+3[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+1 -> 3[ label="d2" ];
+4[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+3 -> 4[ label="d6" ];
+1 -> 4[ label="d2" ];
+5[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+2 -> 5[ label="d4" ];
+6[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+5 -> 6[ label="d9" ];
+2 -> 6[ label="d4" ];
+7[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+4 -> 7[ label="d8" ];
+6 -> 7[ label="d11" ];
+Synchro1[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+7 -> Synchro1[ label="d7" ];
+Synchro0 -> Synchro1[ label="d7" ];
+8[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro1 -> 8;
+7 -> 8[ label="d8" ];
+9[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro1 -> 9;
+1 -> 9[ label="d2" ];
+8 -> 9[ label="d5" ];
+10[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro1 -> 10;
+8 -> 10[ label="d5" ];
+9 -> 10[ label="d12" ];
+1 -> 10[ label="d2" ];
+11[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro1 -> 11;
+2 -> 11[ label="d4" ];
+8 -> 11[ label="d5" ];
+12[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro1 -> 12;
+8 -> 12[ label="d5" ];
+11 -> 12[ label="d14" ];
+2 -> 12[ label="d4" ];
+6 -> 12[ label="d10" ];
+13[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+Synchro1 -> 13;
+10 -> 13[ label="d13" ];
+12 -> 13[ label="d15" ];
+Synchro2[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+13 -> Synchro2[ label="d7" ];
+Synchro1 -> Synchro2[ label="d7" ];
+14[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro2 -> 14;
+13 -> 14[ label="d13" ];
+8 -> 14[ label="d5" ];
+15[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro2 -> 15;
+1 -> 15[ label="d2" ];
+14 -> 15[ label="d5" ];
+16[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro2 -> 16;
+14 -> 16[ label="d5" ];
+15 -> 16[ label="d16" ];
+1 -> 16[ label="d2" ];
+17[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro2 -> 17;
+2 -> 17[ label="d4" ];
+14 -> 17[ label="d5" ];
+18[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro2 -> 18;
+14 -> 18[ label="d5" ];
+17 -> 18[ label="d18" ];
+2 -> 18[ label="d4" ];
+12 -> 18[ label="d10" ];
+19[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+Synchro2 -> 19;
+16 -> 19[ label="d17" ];
+18 -> 19[ label="d19" ];
+Synchro3[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+19 -> Synchro3[ label="d7" ];
+Synchro2 -> Synchro3[ label="d7" ];
+20[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro3 -> 20;
+19 -> 20[ label="d17" ];
+14 -> 20[ label="d5" ];
+21[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro3 -> 21;
+1 -> 21[ label="d2" ];
+20 -> 21[ label="d5" ];
+22[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro3 -> 22;
+20 -> 22[ label="d5" ];
+21 -> 22[ label="d20" ];
+1 -> 22[ label="d2" ];
+23[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro3 -> 23;
+2 -> 23[ label="d4" ];
+20 -> 23[ label="d5" ];
+24[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro3 -> 24;
+20 -> 24[ label="d5" ];
+23 -> 24[ label="d22" ];
+2 -> 24[ label="d4" ];
+18 -> 24[ label="d10" ];
+25[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+Synchro3 -> 25;
+22 -> 25[ label="d21" ];
+24 -> 25[ label="d23" ];
+Synchro4[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+25 -> Synchro4[ label="d7" ];
+Synchro3 -> Synchro4[ label="d7" ];
+26[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro4 -> 26;
+25 -> 26[ label="d21" ];
+20 -> 26[ label="d5" ];
+27[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro4 -> 27;
+1 -> 27[ label="d2" ];
+26 -> 27[ label="d5" ];
+28[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro4 -> 28;
+26 -> 28[ label="d5" ];
+27 -> 28[ label="d24" ];
+1 -> 28[ label="d2" ];
+29[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro4 -> 29;
+2 -> 29[ label="d4" ];
+26 -> 29[ label="d5" ];
+30[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro4 -> 30;
+26 -> 30[ label="d5" ];
+29 -> 30[ label="d26" ];
+2 -> 30[ label="d4" ];
+24 -> 30[ label="d10" ];
+31[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+Synchro4 -> 31;
+28 -> 31[ label="d25" ];
+30 -> 31[ label="d27" ];
+Synchro5[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+31 -> Synchro5[ label="d7" ];
+Synchro4 -> Synchro5[ label="d7" ];
+32[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro5 -> 32;
+31 -> 32[ label="d25" ];
+26 -> 32[ label="d5" ];
+33[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro5 -> 33;
+1 -> 33[ label="d2" ];
+32 -> 33[ label="d5" ];
+34[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro5 -> 34;
+32 -> 34[ label="d5" ];
+33 -> 34[ label="d28" ];
+1 -> 34[ label="d2" ];
+35[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro5 -> 35;
+2 -> 35[ label="d4" ];
+32 -> 35[ label="d5" ];
+36[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro5 -> 36;
+32 -> 36[ label="d5" ];
+35 -> 36[ label="d30" ];
+2 -> 36[ label="d4" ];
+30 -> 36[ label="d10" ];
+37[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+Synchro5 -> 37;
+34 -> 37[ label="d29" ];
+36 -> 37[ label="d31" ];
+Synchro6[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+37 -> Synchro6[ label="d7" ];
+Synchro5 -> Synchro6[ label="d7" ];
+38[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro6 -> 38;
+37 -> 38[ label="d29" ];
+32 -> 38[ label="d5" ];
+39[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro6 -> 39;
+1 -> 39[ label="d2" ];
+38 -> 39[ label="d5" ];
+40[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro6 -> 40;
+38 -> 40[ label="d5" ];
+39 -> 40[ label="d32" ];
+1 -> 40[ label="d2" ];
+41[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro6 -> 41;
+2 -> 41[ label="d4" ];
+38 -> 41[ label="d5" ];
+42[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro6 -> 42;
+38 -> 42[ label="d5" ];
+41 -> 42[ label="d34" ];
+2 -> 42[ label="d4" ];
+36 -> 42[ label="d10" ];
+43[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+Synchro6 -> 43;
+40 -> 43[ label="d33" ];
+42 -> 43[ label="d35" ];
+Synchro7[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+43 -> Synchro7[ label="d7" ];
+Synchro6 -> Synchro7[ label="d7" ];
+44[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro7 -> 44;
+43 -> 44[ label="d33" ];
+38 -> 44[ label="d5" ];
+45[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro7 -> 45;
+1 -> 45[ label="d2" ];
+44 -> 45[ label="d5" ];
+46[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro7 -> 46;
+44 -> 46[ label="d5" ];
+45 -> 46[ label="d36" ];
+1 -> 46[ label="d2" ];
+47[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro7 -> 47;
+2 -> 47[ label="d4" ];
+44 -> 47[ label="d5" ];
+48[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro7 -> 48;
+44 -> 48[ label="d5" ];
+47 -> 48[ label="d38" ];
+2 -> 48[ label="d4" ];
+42 -> 48[ label="d10" ];
+49[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+Synchro7 -> 49;
+46 -> 49[ label="d37" ];
+48 -> 49[ label="d39" ];
+Synchro8[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+49 -> Synchro8[ label="d7" ];
+Synchro7 -> Synchro8[ label="d7" ];
+50[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro8 -> 50;
+49 -> 50[ label="d37" ];
+44 -> 50[ label="d5" ];
+51[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro8 -> 51;
+1 -> 51[ label="d2" ];
+50 -> 51[ label="d5" ];
+52[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro8 -> 52;
+50 -> 52[ label="d5" ];
+51 -> 52[ label="d40" ];
+1 -> 52[ label="d2" ];
+53[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro8 -> 53;
+2 -> 53[ label="d4" ];
+50 -> 53[ label="d5" ];
+54[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro8 -> 54;
+50 -> 54[ label="d5" ];
+53 -> 54[ label="d42" ];
+2 -> 54[ label="d4" ];
+48 -> 54[ label="d10" ];
+55[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+Synchro8 -> 55;
+52 -> 55[ label="d41" ];
+54 -> 55[ label="d43" ];
+Synchro9[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+55 -> Synchro9[ label="d7" ];
+Synchro8 -> Synchro9[ label="d7" ];
+56[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro9 -> 56;
+55 -> 56[ label="d41" ];
+50 -> 56[ label="d5" ];
+57[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro9 -> 57;
+1 -> 57[ label="d2" ];
+56 -> 57[ label="d5" ];
+58[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro9 -> 58;
+56 -> 58[ label="d5" ];
+57 -> 58[ label="d44" ];
+1 -> 58[ label="d2" ];
+59[shape=circle, style=filled fillcolor="#ffffff" fontcolor="#000000"];
+Synchro9 -> 59;
+2 -> 59[ label="d4" ];
+56 -> 59[ label="d5" ];
+60[shape=circle, style=filled fillcolor="#ff0000" fontcolor="#000000"];
+Synchro9 -> 60;
+56 -> 60[ label="d5" ];
+59 -> 60[ label="d46" ];
+2 -> 60[ label="d4" ];
+54 -> 60[ label="d10" ];
+61[shape=circle, style=filled fillcolor="#ff00ae" fontcolor="#000000"];
+Synchro9 -> 61;
+58 -> 61[ label="d45" ];
+60 -> 61[ label="d47" ];
+Synchro10[label="sync", shape=octagon, style=filled fillcolor="#ff0000" fontcolor="#FFFFFF"];
+61 -> Synchro10[ label="d7" ];
+Synchro9 -> Synchro10[ label="d7" ];
+62[shape=circle, style=filled fillcolor="#00ff00" fontcolor="#000000"];
+Synchro10 -> 62;
+61 -> 62[ label="d45" ];
+56 -> 62[ label="d5" ];
+63[shape=circle, style=filled fillcolor="#0000ff" fontcolor="#ffffff"];
+Synchro10 -> 63;
+64[shape=circle, style=filled fillcolor="#0000ff" fontcolor="#ffffff"];
+Synchro10 -> 64;
+65[shape=circle, style=filled fillcolor="#b30000" fontcolor="#ffffff"];
+Synchro10 -> 65;
+63 -> 65[ label="d49" ];
+62 -> 65[ label="d5" ];
+66[shape=circle, style=filled fillcolor="#ffff00" fontcolor="#000000"];
+Synchro10 -> 66;
+65 -> 66[ label="d52" ];
+67[shape=circle, style=filled fillcolor="#b30000" fontcolor="#ffffff"];
+Synchro10 -> 67;
+64 -> 67[ label="d51" ];
+62 -> 67[ label="d5" ];
+68[shape=circle, style=filled fillcolor="#ffff00" fontcolor="#000000"];
+Synchro10 -> 68;
+67 -> 68[ label="d54" ];  }
+  subgraph legend {
+    rank=sink;
+    node [shape=plaintext, height=0.75];
+    ranksep=0.20;
+    label = "Legend";
+    key [label=<
+      <table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+<tr>
+<td align="right">loadfileFromHDFS</td>
+<td bgcolor="#0000ff">&nbsp;</td>
+</tr>
+<tr>
+<td align="right">calc_yp</td>
+<td bgcolor="#ffffff">&nbsp;</td>
+</tr>
+<tr>
+<td align="right">calc_CostAndGrad</td>
+<td bgcolor="#ff0000">&nbsp;</td>
+</tr>
+<tr>
+<td align="right">accumulateCostAndGrad</td>
+<td bgcolor="#ff00ae">&nbsp;</td>
+</tr>
+<tr>
+<td align="right">updateWeight</td>
+<td bgcolor="#00ff00">&nbsp;</td>
+</tr>
+<tr>
+<td align="right">predict_chunck</td>
+<td bgcolor="#b30000">&nbsp;</td>
+</tr>
+<tr>
+<td align="right">savePredictionToHDFS</td>
+<td bgcolor="#ffff00">&nbsp;</td>
+</tr>
+      </table>
+    >]
+  }
+}
