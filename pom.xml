@@ -14,10 +14,27 @@
 	<description>Some algorithms developed in Java COMPSs with or without using the HDFS's API developed in this project.</description>
 
 	<properties>
+		<compss.version>2.0</compss.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>grid-repo</id>
+			<name>BSC Grid computing and Clusters group</name>
+			<url>http://compss.bsc.es/artifactory/grid-devel-repo</url>
+		</repository>
+	</repositories>
+
+	<!-- DISTRIBUTION MANAGEMENT -->
+	<distributionManagement>
+		<repository>
+			<id>grid-repo</id>
+			<name>BSC Grid computing and Clusters group</name>
+			<url>http://compss.bsc.es/artifactory/grid-devel-repo</url>
+		</repository>
+	</distributionManagement>
 
 
 	<!-- BUILD SETTINGS -->
@@ -26,7 +43,6 @@
 		<finalName>COMPSs_Tests-1.0</finalName>
 
 		<plugins>
-
 			<!-- To include the external jars (HDFS's Integration) -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -68,70 +84,30 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
-
 		</plugins>
-
-
-
-
 	</build>
-
 
 
 	<dependencies>
 		<!-- Import COMPSs -->
 		<dependency>
-			<groupId>compss-engine</groupId>
-			<artifactId>compss-engine</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>/opt/COMPSs/Runtime/compss-engine.jar</systemPath>
+			<groupId>es.bsc.compss</groupId>
+			<artifactId>compss-api</artifactId>
+			<version>${compss.version}</version>
 		</dependency>
 
-		<!-- Import HDFS integration
-		<dependency>
-			<groupId>HDFS_Integration</groupId>
-			<artifactId>HDFS_Integration</artifactId>
-			<version>1.1</version>
-			<scope>system</scope>
-			<systemPath>/home/lucasmsp/workspace/BigSea/compss-hdfs/HDFS_Integration/out/artifacts/HDFS_Integration.jar</systemPath>
-		</dependency>
-		-->
-
-
+		<!-- HDFS's connector -->
 		<dependency>
 		<!--
-                    How to create a repository:
-                            mvn install:install-file -Dfile=HDFS_Integration.jar \
+            How to create a repository:
+                mvn install:install-file -Dfile=HDFS_Integration.jar \
                             -DgroupId=HDFS_Integration -DartifactId=HDFS_Integration \
                             -Dversion=1.0 -Dpackaging=jar -->
 
-                    <groupId>HDFS_Integration</groupId>
-                    <artifactId>HDFS_Integration</artifactId>
-                    <version>1.0</version>
-
-
-			 <exclusions>
-                <exclusion>
-                   <groupId>org.slf4j</groupId>
-                   <artifactId>slf4j-log4j12</artifactId>
-               	</exclusion>
-				 <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>slf4j-api</artifactId>
-                   </exclusion>
-				 <exclusion>
-					 <groupId>org.slf4j</groupId>
-					 <artifactId>log4j-slf4j-impl</artifactId>
-				 </exclusion>
-			 </exclusions>
-
+			<groupId>HDFS_Integration</groupId>
+			<artifactId>HDFS_Integration</artifactId>
+			<version>1.0</version>
 		</dependency>
-
-
-
 	</dependencies>
 
 

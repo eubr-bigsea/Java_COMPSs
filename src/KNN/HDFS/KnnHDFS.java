@@ -9,33 +9,44 @@ package KNN.HDFS;
  *
  */
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import integration.Block;
 import integration.HDFS;
+import org.apache.hadoop.security.SaslOutputStream;
 
 public class KnnHDFS {
 
 
-    public static void readBlockFromHDFS(Block blk,Samples s) {
+    public static void readBlockFromHDFS(Block blk, Samples s) {
         long startTime = System.nanoTime();
 
-        String[] lines = blk.getRecords();
+
+        String[] lines = blk.getRecords('\n');
+        ArrayList<double[]> Features = new ArrayList<double[]>();
+        ArrayList<Integer>  Labels   = new ArrayList<Integer>();
+
         for (int l = 0; l<lines.length;l++) {
             String[] tokens = lines[l].split(",");
             if (tokens.length > 1) {
-                s.addLabels((int) Float.parseFloat(tokens[0]));
+                Labels.add((int) Float.parseFloat(tokens[0]));
                 double[] col = new double[tokens.length - 1];
                 for (int i = 1; i < tokens.length; i++)
                     col[i - 1] = Double.parseDouble(tokens[i]);
-                s.addFeature(col);
+                Features.add(col);
             }
         }
 
+        s.setFeatures(Features);
+        s.setLabels(Labels);
+
         System.out.println("[INFO] - Readed "+s.getSizebyLabels()+" records");
 
-        long estimatedTime0 = System.nanoTime() - startTime;
-        double seconds0 = (double) estimatedTime0 / 1000000000.0;
-        System.out.printf("[INFO] - readBlockFromHDFS -> Time elapsed: %.2f seconds\n",seconds0);
+        long estimatedTime = System.nanoTime() - startTime;
+        double seconds = (double) estimatedTime / 1000000000.0;
+        System.out.printf("[INFO] - readBlockFromHDFS -> Time elapsed: %.2f seconds\n",seconds);
     }
 
 
@@ -46,17 +57,23 @@ public class KnnHDFS {
         String[] tokens;
 
         try{
-            String [] lines = b1.getRecords();
-            for (int  l = 0; l<lines.length;l++) {
-                    tokens = lines[l].split(",");
-                    if (tokens.length>1) {
-                        trainingSet.addLabels( (int) Float.parseFloat(tokens[0]));
-                        double[] col = new double[tokens.length - 1];
-                        for (int i = 1; i < tokens.length; i++)
-                            col[i - 1] = Double.parseDouble(tokens[i]);
-                        trainingSet.addFeature(col);
-                    }
+            String[] lines = b1.getRecords('\n');
+            ArrayList<double[]> Features = new ArrayList<double[]>();
+            ArrayList<Integer>  Labels   = new ArrayList<Integer>();
+
+            for (int l = 0; l<lines.length;l++) {
+                tokens = lines[l].split(",");
+                if (tokens.length > 1) {
+                    Labels.add((int) Float.parseFloat(tokens[0]));
+                    double[] col = new double[tokens.length - 1];
+                    for (int i = 1; i < tokens.length; i++)
+                        col[i - 1] = Double.parseDouble(tokens[i]);
+                    Features.add(col);
+                }
             }
+
+            trainingSet.setFeatures(Features);
+            trainingSet.setLabels(Labels);
 
         } catch (Exception e) {
             System.out.println("Error: ClassifierFromHDFSblock - Part1");
@@ -69,49 +86,41 @@ public class KnnHDFS {
         System.out.printf("[INFO] - Readed Training file -> Time elapsed: %.2f seconds\n",seconds0);
 
         for (int s =0; s<test_blk.getSizebyFeatures();s++) {
-            if(s% 100 == 0)
+            if(s% 1000 == 0)
                 System.out.println("Record:" + s);
             double[] cols = test_blk.getFeatureAll(s);
-            double [][] bestPoints = new double[2][K+1];
-            //Candidate c = new Candidate();
-           // c.setK(K+1);
-
+            double[] bestPoints_d = new double[K+1];
+            int[]    bestPoints_l = new int[K+1];
             double tmp_dist = 0;
-            double tmp_label = 0;
+            int tmp_label = 0;
+
             //Setting up
             for (int d=0; d<K;d++){
-                bestPoints[0][d] = -1.0;
-                bestPoints[1][d] = Double.MAX_VALUE;
+                bestPoints_l[d] = -1;
+                bestPoints_d[d] = Double.MAX_VALUE;
             }
 
             for (int s2 = 0; s2<trainingSet.getSizebyFeatures();s2++) {
-                bestPoints[1][K] = distance(trainingSet.getFeatureAll(s2), cols);
-                bestPoints[0][K] = trainingSet.getLabel(s2);
+                bestPoints_d[K] = distance(trainingSet.getFeatureAll(s2), cols);
+                bestPoints_l[K] = trainingSet.getLabel(s2);
 
                 for (int j=K; j>0;j--){ //Insert Sort  - OK
-                    if(bestPoints[1][j] < bestPoints[1][j-1]){
-                        tmp_label = bestPoints[0][j];
-                        bestPoints[0][j]    = bestPoints[0][j-1];
-                        bestPoints[0][j-1]  = tmp_label;
+                    if(bestPoints_d[j] < bestPoints_d[j-1]){
+                        tmp_label = (int) bestPoints_l[j];
+                        bestPoints_l[j]    = bestPoints_l[j-1];
+                        bestPoints_l[j-1]  = tmp_label;
 
-                        tmp_dist = bestPoints[1][j];
-                        bestPoints[1][j]    = bestPoints[1][j-1];
-                        bestPoints[1][j-1]  = tmp_dist;
+                        tmp_dist = bestPoints_d[j];
+                        bestPoints_d[j]    = bestPoints_d[j-1];
+                        bestPoints_d[j-1]  = tmp_dist;
                     }
                 }
 
             }
 
-            partial_result.addDistances(bestPoints[1]);
-            partial_result.addLabels(bestPoints[0]);
+            partial_result.addDistances(bestPoints_d);
+            partial_result.addLabels(bestPoints_l);
 
-
-//            for(int d=0; d<bestPoints[1].length;d++)
-//                System.out.print(bestPoints[1][d]+" ");
-//            System.out.println(" ");
-
-          //  int label = classify(trainingSet,cols, K);
-          //  partial_result.addLabels(label);
         }
 
         long estimatedTime = System.nanoTime() - startTime;
@@ -119,11 +128,12 @@ public class KnnHDFS {
         System.out.printf("\n[INFO] - ClassifierFromHDFSblock -> Time elapsed: %.2f seconds\n",seconds);
     }
 
-    public static double getPopularElement(double[] a){ //do better K-1
+    public static int getPopularElement(int[] a){ //do better K-1
 
         int count = 1, tempCount;
-        double popular = a[0];
-        double temp;
+        int popular = a[0];
+        int temp;
+
         for (int i = 0; i < (a.length - 2); i++){
             temp = a[i];
             tempCount = 0;
@@ -150,7 +160,7 @@ public class KnnHDFS {
         return  Math.sqrt(sum); // euclidian distance would be sqrt(sum)... (int)
     }
 
-
+    @SuppressWarnings("unused")
     public static void evaluateFrag(Samples part, double[] partial, int[] correct){
         long startTime = System.nanoTime();
 
@@ -167,11 +177,10 @@ public class KnnHDFS {
         System.out.printf("[INFO] - evaluateFrag -> Time elapsed: %.2f seconds\n\n",seconds);
     }
 
+    @SuppressWarnings("unused")
     public static void accumulate_error(int[] correct, int[] correct2){
-
         for(int f=0; f<correct2.length;f++)
             correct[f] += correct2[f];
-
     }
 
 
@@ -185,12 +194,12 @@ public class KnnHDFS {
             int i_right=0;
 
             double[] left_dist = result.getDistance(i_record);
-            double[] left_lab = result.getLabel(i_record);
+            int   [] left_lab = result.getLabel(i_record);
             double[] right_dist = partial_result.getDistance(i_record);
-            double[] right_lab = partial_result.getLabel(i_record);
+            int   [] right_lab = partial_result.getLabel(i_record);
 
             double[] record_d = new double[K+1];
-            double[] record_l = new double[K+1];
+            int   [] record_l = new    int[K+1];
 //            System.out.print("L ");
 //            for(int d=0; d<left_dist.length;d++)
 //                System.out.print(left_dist[d]+" ");
@@ -214,10 +223,10 @@ public class KnnHDFS {
             }
             tmp.addRecord(record_d,record_l);
 
-//            System.out.print("M ");
-//            for(int d=0; d<record_d.length;d++)
-//                System.out.print(record_d[d]+" ");
-//            System.out.println(" --- ");
+            System.out.print("M ");
+            for(int d=0; d<record_d.length;d++)
+                System.out.print(record_d[d]+" ");
+            System.out.println(" --- "+record_d.length);
 
 
         }
@@ -229,16 +238,12 @@ public class KnnHDFS {
         return result;
     }
 
-    public static double[] getKN(Candidate neighborhood,int K){
+    public static int[] getKN(Candidate neighborhood,int K){
         long startTime = System.nanoTime();
 
         int size = neighborhood.getSize();
-        double[] result = new double[size];
+        int[] result = new int[size];
         for (int i =0;i<size;i++){
-//            double[] dist = neighborhood[i].getDistances();
-//            for(int d=0; d<dist.length;d++)
-//                System.out.print(dist[d]+" ");
-//            System.out.println(" ");
             result[i] = getPopularElement(neighborhood.getLabel(i));
         }
 
@@ -250,13 +255,41 @@ public class KnnHDFS {
     }
 
 
+    public static void savePredictionToFile(int[] result, String filename){
+        BufferedWriter outputWriter = null;
+        try {
+            outputWriter = new BufferedWriter(new FileWriter(filename));
+
+            for (int i = 0; i < result.length; i++) {
+                outputWriter.write(result[i]+"\n");
+                // Or: outputWriter.write(Integer.toString(result[i]);
+            }
+            outputWriter.flush();
+            outputWriter.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
 
     public static void main(String[] args) {
 
-        int frag = 2;
+
+        /*
+            Idea: Each node can read a Block of Test and a Block of Train, after that, the result
+
+
+
+
+         */
+        int numFrags = 2;
         int K = 1;
         String trainingSet_name     =  "";
-        String validationSet_name   = "";
+        String validationSet_name   =  "";
         String defaultFS = System.getenv("MASTER_HADOOP_URL");
 
         // Get and parse arguments
@@ -265,7 +298,9 @@ public class KnnHDFS {
             String arg = args[argIndex++];
             if (arg.equals("-K")) {
                 K = Integer.parseInt(args[argIndex++]);
-            } else if (arg.equals("-t")) {
+            } else if (arg.equals("-f")) {
+                numFrags  = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-t")) {
                 trainingSet_name = args[argIndex++];
             }else if (arg.equals("-v")) {
                 validationSet_name = args[argIndex++];
@@ -276,69 +311,48 @@ public class KnnHDFS {
             System.exit(0);
         }
 
-
-        HDFS dfs =  new HDFS(defaultFS);
-        ArrayList<Block> FILE_TRAIN_SPLITS = dfs.findALLBlocks(trainingSet_name);
-        ArrayList<Block> FILE_TEST_SPLITS  = dfs.findALLBlocks(validationSet_name);
-
-        int numFrags = FILE_TEST_SPLITS.size();
-        int numFrags2 = FILE_TRAIN_SPLITS.size();
-
         System.out.println("Running with the following parameters:");
         System.out.println("- K Neighborhood: " + K);
         System.out.println("- Training set: " + trainingSet_name);
         System.out.println("- Test set: " + validationSet_name);
         System.out.println("- Frag Number:" + numFrags+"\n");
 
+        //HDFS part
+        HDFS dfs =  new HDFS(defaultFS);
+        ArrayList<Block> FILE_TRAIN_SPLITS = dfs.findBlocksByRecords(trainingSet_name,numFrags);
+        ArrayList<Block> FILE_TEST_SPLITS  = dfs.findBlocksByRecords(validationSet_name,numFrags);
 
-        Samples[] test_file = new Samples[numFrags];
-        int[][] numcorrect = new int[numFrags][2];
 
-        Candidate [][] partial_result = new Candidate[frag][frag];
+        Samples[] test_file             = new Samples[numFrags];
+        Candidate [][] partial_result   = new Candidate[numFrags][numFrags];
+        int[] result_part_final;
+
         //Read the test set and classifier
         for(int f1=0; f1<numFrags;f1++){
-            test_file[f1] = new Samples();// needed to start the object
+            test_file[f1] = new Samples();  //start the object
             readBlockFromHDFS(FILE_TEST_SPLITS.get(f1), test_file[f1]);
-
-            for(int f2=0; f2<numFrags2;f2++) {
-                partial_result[f1][f2] =  new Candidate();// needed to start the object
+            for(int f2=0; f2<numFrags;f2++) {
+                partial_result[f1][f2] =  new Candidate(); //start the object
                 ClassifyBlock(test_file[f1], FILE_TRAIN_SPLITS.get(f2), partial_result[f1][f2], K);
             }
 
             //Merge Results
-            int size = frag;
+            int size = numFrags;
             int i = 0;
             int gap = 1;
             while (size > 1) {
                 partial_result[f1][i] = merge(partial_result[f1][i], partial_result[f1][i + gap],K);
                 size--;
                 i = i + 2 * gap;
-                if (i == frag) {
+                if (i == numFrags) {
                     gap *= 2;
                     i = 0;
                 }
             }
 
-            double[] result_part_final = getKN(partial_result[f1][0],K);
-            evaluateFrag(test_file[f1],result_part_final,numcorrect[f1]);
+            result_part_final = getKN(partial_result[f1][0],K);
+            savePredictionToFile(result_part_final,"knnHDFS_"+f1+".out");
+
         }
-
-        //Accumulate
-        int size = numFrags;
-        int i = 0;
-        int gap = 1;
-        while (size > 1) {
-            accumulate_error(numcorrect[i], numcorrect[i + gap]);
-            size--;
-            i = i + 2 * gap;
-            if (i == numFrags) {
-                gap *= 2;
-                i = 0;
-            }
-        }
-
-        //Evaluation
-        System.out.println("Accuracy: " + (double) numcorrect[0][0] / numcorrect[0][1] * 100 + "%");
-
     }
 }

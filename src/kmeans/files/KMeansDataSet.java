@@ -26,8 +26,8 @@ import java.io.*;
  */
 
 public class KMeansDataSet {
-    private static final int cookie = 0x2badfdc0;
-    private static final int version = 1;
+    //private static final int cookie = 0x2badfdc0;
+    //private static final int version = 1;
     
     public final int numPoints;
     public final int numDimensions;
@@ -43,36 +43,41 @@ public class KMeansDataSet {
     }
 
     public static KMeansDataSet readPointsFromFile(String fileName,int numPoints,int numDimensions,int numFrags, int K) {
-        int i = 0;
+        int i_t = 0;
+        int i =0;
         int j = 0;
         int f = 0;
 
+
         float[][] points = null;
         float[] cluster = new float[K * numDimensions];
-
         try {
             BufferedReader lines = new BufferedReader(new FileReader(fileName));
-            points = new float[numFrags][numPoints * numDimensions];
-
             System.out.printf("Reading %d %d-dimensional points from %s\n", numPoints, numDimensions, fileName);
+
             int pointsPerFragment = numPoints / numFrags;
+            points = new float[numFrags][pointsPerFragment * numDimensions];
 
-            for (i = 0; i < numPoints; i++) {
-                if ((i != 0) && ((i % pointsPerFragment) == 0))
+            for (i_t = 0; i_t < numPoints; i_t++,i++) {
+                if ((i_t != 0) && ((i_t % pointsPerFragment) == 0)) {
                     f++;
-
+                    i=0;
+                }
                 String line = lines.readLine();
                 String[] tok = line.split(",");
+
                 if(tok.length>1) {
-                    //System.out.println(line);
-                    for (j = 1; j < numDimensions; ++j) { // 1 to 28
+                   // System.out.println(line);
+                    for (j = 1; j <= numDimensions; ++j) { // 1 to 28
                         points[f][i * numDimensions + j - 1] = Float.parseFloat(tok[j]);
                     }
                 }
-
-
-
             }
+
+            // for (f=0;f<2;f++)
+            //     for (i=0;i<150;i+=2)
+            //        System.out.println(f +"|"+ points[f][i]+" "+points[f][i+1]);
+
         } catch (FileNotFoundException e) {
             System.err.println("Unable to open file " + fileName);
         } catch (IOException e) {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
  */
 public class Candidate implements Serializable{
 
-    ArrayList<double[]> labels = new ArrayList<double[]>();
+    ArrayList<int[]> labels = new ArrayList<int[]>();
     ArrayList<double[]> distances = new ArrayList<double[]>();
     int K =1;
 
@@ -30,7 +30,7 @@ public class Candidate implements Serializable{
         return labels.size();
     }
 
-    public ArrayList<double[]> getALLLabels() {
+    public ArrayList<int[]> getALLLabels() {
         return labels;
     }
     public ArrayList<double[]> getALLDistances() {
@@ -38,7 +38,7 @@ public class Candidate implements Serializable{
     }
 
 
-    public void setLabels(ArrayList<double[]> labels) {
+    public void setLabels(ArrayList<int[]>  labels) {
         this.labels = labels;
     }
 
@@ -48,11 +48,11 @@ public class Candidate implements Serializable{
 
     }
 
-    public double[] getLabel(int i){
+    public int[] getLabel(int i){
         return labels.get(i);
     }
 
-    public void addRecord(double[] dist,double[] label){
+    public void addRecord(double[] dist, int[] label){
         distances.add(dist);
         labels.add(label);
     }
@@ -67,7 +67,7 @@ public class Candidate implements Serializable{
         distances.add(dists);
     }
 
-    public void addLabels(double[] lab){
+    public void addLabels(int[] lab){
         labels.add(lab);
     }
 
@@ -75,7 +75,7 @@ public class Candidate implements Serializable{
     public void addDistance(int i,int d,double dist){
         distances.get(i)[d] = dist;
     }
-    public void addLabel(int i,int d, double l){
+    public void addLabel(int i,int d, int l){
         labels.get(i)[d]=l;
     }
 }

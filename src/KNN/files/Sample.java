@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 
 public class Sample implements Serializable {
+
     int label;
     double [] cols;
 

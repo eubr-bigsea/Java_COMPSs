@@ -18,27 +18,23 @@ public class Samples implements Serializable {
     public ArrayList<Integer>  Labels  = new ArrayList<Integer>();
 
 
-    public Samples() { }
+    public Samples() {}
 
-    public void setFeatures(ArrayList<double[]> features) {
-        Features = features;
+
+
+
+    public double[] getFeatureAll(int m){
+        return Features.get(m);
+    }
+
+
+/*
+    public double getFeature(int m,int d){
+        return Features.get(m)[d];
     }
     public ArrayList<double[]> getFeatures() {
         return Features;
     }
-
-    public double getFeature(int m,int d){
-        return Features.get(m)[d];
-    }
-    public double[] getFeatureAll(int m){
-        return Features.get(m);
-    }
-    public int getLabel(int d){
-        return Labels.get(d);
-    }
-
-
-
     public void start(){
         Labels = new ArrayList<Integer>();
         Features = new ArrayList<double[]>();
@@ -56,6 +52,10 @@ public class Samples implements Serializable {
             Features = new ArrayList<double[]>();
         Features.add(f);
     }
+*/
+    public int getLabel(int d){
+    return Labels.get(d);
+}
 
     public ArrayList<Integer> getLabels() {
         return Labels;
@@ -65,9 +65,14 @@ public class Samples implements Serializable {
         Labels = labels;
     }
 
+    public void setFeatures(ArrayList<double[]> features) {
+        Features = features;
+    }
+
     public int getSizebyLabels(){
         return Labels.size();
     }
+
     public int getSizebyFeatures(){
         return Features.size();
     }

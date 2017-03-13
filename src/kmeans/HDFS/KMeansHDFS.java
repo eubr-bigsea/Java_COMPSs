@@ -18,32 +18,36 @@ package kmeans.HDFS;
 import integration.Block;
 import integration.HDFS;
 
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class KMeansHDFS {
 
 
-    public static void read(Block blk,int numDimensions,Fragment Point){
+    public static Fragment read(Block blk, int numDimensions){
         long startTime = System.nanoTime();
 
-        String[] records = blk.getRecords();
+        Fragment pp = new Fragment();
+        String[] records = blk.getRecords('\n');
         float[] p = new float[numDimensions * records.length];
         for (int i = 0; i<records.length;i++){
             String[] col = records[i].split(",");
             if(col.length>1) {
-                for (int j = 1; j < numDimensions; ++j) { // 1 to 28
+                for (int j = 1; j <= numDimensions; ++j) { // 1 to 28
                     p[i * numDimensions + j - 1] = Float.parseFloat(col[j]);
                 }
             }
         }
-        Point.setFeatures_part(p);
 
+        pp.setFeatures(p);
         long estimatedTime0 = System.nanoTime() - startTime;
         double seconds0 = (double) estimatedTime0 / 1000000000.0;
-        System.out.printf("[INFO] - Readed block file -> Time elapsed: %.2f seconds\n",seconds0);
+        System.out.printf("[INFO] - Readed block -> Time elapsed: %.2f seconds\nNum Lines %d\n",seconds0,records.length);
 
+        return pp;
     }
 
 
@@ -53,8 +57,7 @@ public class KMeansHDFS {
     public static void computeNewLocalClusters(int myK,	int numDimensions, float[] points,
                                                float[] clusterPoints, float[] newClusterPoints, int[] clusterCounts) {
 
-        System.out.println("Start computeNewLocalClusters");
-        int numPoints = points.length / numDimensions;
+        int numPoints = points.length/ numDimensions;
         for (int pointNumber = 0; pointNumber < numPoints; pointNumber++) {
             int closest = -1;
             float closestDist = Float.MAX_VALUE;
@@ -78,7 +81,8 @@ public class KMeansHDFS {
     }
 
     public static void accumulate(float[] onePoints, float[] otherPoints, int[] oneCounts, int[] otherCounts) {
-	    for (int i = 0; i < otherPoints.length; i++) {
+
+        for (int i = 0; i < otherPoints.length; i++) {
 	    	onePoints[i] += otherPoints[i];
         }
 	    for (int i = 0; i < otherCounts.length; i++) {
@@ -91,55 +95,65 @@ public class KMeansHDFS {
     	for (int k = 0; k < K; k++) {
             float tmp = (float)counts[k];
             for (int dim = 0; dim < numDimensions; dim++) {
+                if (tmp == 0.0)
+                    tmp = (float) 0.0000001;
                 points[k * numDimensions + dim] /= tmp;
             }
         }
 	
         System.arraycopy(points, 0, cluster, 0, cluster.length);
     }
-    
-    private static void initializePoints(Fragment[] data, float[] currentCluster,int numFrags) { //chunck and cluster
 
-        // Initialize cluster (copy first points)
-        int nFrag = 0, startPos = 0;
-        int toCopy = currentCluster.length;
-        while (toCopy > 0) {
-        	int copied = copyToCluster(data[nFrag].getFeatures_part(), currentCluster, toCopy, startPos);
-        	toCopy -= copied;
-        	startPos += copied;
-        	nFrag++;
+
+
+
+    private static float[]  copyToCluster(float[] points,  int toCopy, int startPos) {
+
+        float [] cluster = new float[toCopy];
+        int j = 0;
+        for (int i = startPos; i < toCopy; i++) {
+            cluster[i]   = points[j++];
         }
 
-    }
-
-    private static int copyToCluster(float[] points, float[] cluster, int toCopy, int startPos) {
-    	int canCopy = Math.min(toCopy, Array.getLength(points));
-    	int j = 0;
-    	for (int i = startPos; i < startPos + canCopy; i++) {
-    		cluster[i] = points[j++];
-    	}
-    	return j;
+        return cluster;
     }
 
     @SuppressWarnings("unused")
 	private static void printPoints(float[] points) {
-    	System.out.println("No print");
-    	//for (int i = 0; i < points.length; i++)
-			//System.out.print(points[i] + " ");
+    	//System.out.println("No print");
+    	for (int i = 0; i < points.length; i++)
+			System.out.print(points[i] + " ");
     	System.out.println("");
     }
 
+    public static boolean compareArrays(float[] array1, float[] array2) {
+        boolean b = true;
+        if (array1 != null && array2 != null){
+            if (array1.length != array2.length)
+                b = false;
+            else
+                for (int i = 0; i < array2.length; i++) {
+                    if (array2[i] != array1[i]) {
+                        b = false;
+                    }
+                }
+        }else{
+            b = false;
+        }
+        return b;
+    }
 
 	public static void main(String[] args) {
 
     	// Default values
-        int K = 4;
-        int iterations = 100;
-        int nPoints = 1000;
-        int nDimensions = 28;
-        int nFrags = 2;
+        int K = 0;
+        int iterations = 0;
+        int nPoints = 0;
+        int nDimensions = 0;
+        int nFrags = 0;
 		String fileName = "";
         int argIndex = 0;
+        Boolean force_split = false;
 
         // Get and parse arguments
         while (argIndex < args.length) {
@@ -148,15 +162,16 @@ public class KMeansHDFS {
                 K = Integer.parseInt(args[argIndex++]);
             } else if (arg.equals("-i")) {
                 iterations = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-f")) {
+                force_split=true;
+                nFrags = Integer.parseInt(args[argIndex++]);
             } else if (arg.equals("-n")) {
             	nPoints = Integer.parseInt(args[argIndex++]);
             } else if (arg.equals("-d")) {
             	nDimensions = Integer.parseInt(args[argIndex++]);
-            } else if (arg.equals("-f")) {
-            	nFrags = Integer.parseInt(args[argIndex++]);
-            } else {
+            } else if (arg.equals("-t")) {
             	// WARN: Disabled
-            	fileName = arg;
+            	fileName = args[argIndex++];
             }
         }
 
@@ -167,7 +182,13 @@ public class KMeansHDFS {
 
         String defaultFS = System.getenv("MASTER_HADOOP_URL");
         HDFS dfs =  new HDFS(defaultFS);
-        ArrayList<Block> HDFS_SPLITS_LIST = dfs.findALLBlocks(fileName);
+        ArrayList<Block> HDFS_SPLITS_LIST;
+        if (force_split) {
+            HDFS_SPLITS_LIST =  dfs.findBlocksByRecords(fileName, nFrags);
+
+        }else{
+            HDFS_SPLITS_LIST = dfs.findALLBlocks(fileName);
+        }
         nFrags = HDFS_SPLITS_LIST.size();
 
         System.out.println("Running with the following parameters:");
@@ -179,30 +200,29 @@ public class KMeansHDFS {
         System.out.println("- Frag: " + nFrags);
 
 
-        Fragment[] Points = new Fragment[nFrags];
-        for (int j = 0; j < nFrags; j++)
-            Points[j] = new Fragment();
+        Fragment[] Points  = new Fragment[nFrags];
+        float[]    cluster = new float[K * nDimensions];
 
-        int i = 0;
+        int i =0;
         for(Block b : HDFS_SPLITS_LIST) {
-            read(b,nDimensions,Points[i]);
+            Points[i] = read(b, nDimensions);
             i++;
         }
 
-        float[] cluster = new float[K * nDimensions];
-        int[][] clusterCounts = new int[nFrags][K];
-        float[][] newClusters = new float[nFrags][K*nDimensions];
-
-        initializePoints(Points, cluster, nFrags);
+        cluster = copyToCluster(Points[0].getFeatureAll(), cluster.length, 0);
 
         // Do the requested number of iterations
         for (int iter = 0; iter < iterations; iter++) {
+
+            int[][] clusterCounts = new   int[nFrags][K];
+            float[][] newClusters = new float[nFrags][K*nDimensions];
+            float[] bkp_clusters = cluster;
             // Computation
-        	for (int j = 0; j < nFrags; j++) {
-        		float[] frag = Points[j].getFeatures_part();
-                computeNewLocalClusters(K, nDimensions, frag, cluster, newClusters[j], clusterCounts[j]);
+        	for (int f = 0; f < nFrags; f++) {
+                float[] frag = Points[f].getFeatureAll();
+                computeNewLocalClusters(K, nDimensions, frag, cluster, newClusters[f], clusterCounts[f]);
             }
-        	
+
         	// Reduction: points and counts
         	// Stored in newClusters[0], clusterCounts[0]
         	int size = newClusters.length;
@@ -217,13 +237,19 @@ public class KMeansHDFS {
         			g = 0;
         		}
         	}
-            
+
             // Local reduction to get the new clusters
             // Adjust cluster coordinates by dividing each point value
             // by the number of points in the cluster
         	localReduction(newClusters[0], clusterCounts[0], K, nDimensions, cluster);
+
+            if(compareArrays(bkp_clusters,cluster) && iter!=0){
+                System.out.println("Iterations:"+ (iter+1));
+                break;
+            }
+
         }
-        
+
         // All done. Print the results
         System.out.println("Result clusters: ");
         for (int k = 0; k < K; k++) {

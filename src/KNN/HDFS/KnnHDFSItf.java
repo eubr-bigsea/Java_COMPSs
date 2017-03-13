@@ -58,6 +58,15 @@ public interface KnnHDFSItf {
     );
 
     @Method(declaringClass = "KNN.HDFS.KnnHDFS")
+    void savePredictionToFile(
+            @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.IN)
+            int[] result,
+            @Parameter(type = Parameter.Type.FILE, direction = Parameter.Direction.OUT)
+            String filename
+    );
+
+    /*
+    @Method(declaringClass = "KNN.HDFS.KnnHDFS")
     void accumulate_error(
             @Parameter(type = Parameter.Type.OBJECT, direction = Parameter.Direction.INOUT)
                     int[] correct,
@@ -75,7 +84,7 @@ public interface KnnHDFSItf {
             @Parameter (direction = Parameter.Direction.INOUT)
                     int[] correct
     );
-
+    */
 
 
 }

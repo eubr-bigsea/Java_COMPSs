@@ -41,24 +41,6 @@ public class Sample implements Serializable{
         Features = features;
     }
 
-    public void start(){
-        Labels = new ArrayList<Integer>();
-        Features = new ArrayList<double[]>();
-    }
-
-    public void addLabels(int l){
-        if (Labels == null)
-            Labels = new ArrayList<Integer>();
-
-        Labels.add(l);
-    }
-
-    public void addFeature(double[] f){
-        if (Features == null)
-            Features = new ArrayList<double[]>();
-        Features.add(f);
-    }
-
     public ArrayList<Integer> getLabels() {
         return Labels;
     }

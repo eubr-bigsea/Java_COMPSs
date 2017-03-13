@@ -21,7 +21,7 @@ public class Knn {
     public static ArrayList<Sample> readFile(String file)  {
 
         long startTime = System.nanoTime();
-        Sample sample;
+        Sample sample = new Sample();
         ArrayList<Sample> samples = new ArrayList<Sample>();
         int j =0;
 
@@ -36,6 +36,7 @@ public class Knn {
                     j++;
                     sample = new Sample();
                     sample.setLabel((int) Float.parseFloat(tokens[0]));
+
                     double[] col = new double[tokens.length - 1];
                     for (int i = 1; i < tokens.length; i++) {
                         col[i - 1] = Double.parseDouble(tokens[i]);

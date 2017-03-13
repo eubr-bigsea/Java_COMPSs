@@ -1,20 +1,29 @@
 package kmeans.HDFS;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
 
 public class Fragment implements Serializable {
 
-    public float[] features_part = new float[10];
-
     public Fragment() {
+        Features = new ArrayList<float[]>(1);
+
     }
 
-    public float[] getFeatures_part() {
-        return features_part;
+    public ArrayList<float[]> Features = new ArrayList<float[]>(1);
+
+
+    public float[] getFeatureAll(){
+        return Features.get(0);
     }
 
-    public void setFeatures_part(float[] features_part) {
-        this.features_part = features_part;
+
+    public void setFeatures(float[] f) {
+        Features.add(f);
+
     }
+
+
 
 }

@@ -14,11 +14,65 @@ package SVM.HDFS;
 
 import integration.Block;
 import integration.HDFS;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class SVMHDFS {
+
+    public static double[] calc_yp( Sample XY, double[] w, int numDim){
+        long startTime = System.nanoTime();
+
+        double[] ypp = new double[XY.getSize()];
+
+        for(int m=0;m<XY.getSize();m++){  //for all elements of the block
+            ypp[m] = 0;
+            for(int d=0;d<numDim;d++) {
+                ypp[m] += XY.getFeature(m, d) * w[d];
+            }
+
+        }
+
+        long estimatedTime = System.nanoTime() - startTime;
+        double seconds = (double)estimatedTime / 1000000000.0;
+        System.out.printf("[INFO] - calc_yp-> Time elapsed: %.4f seconds\n\n",seconds);
+        return ypp;
+    }
+
+    public static double[] calc_CostAndGrad(int numDim, int f, double lambda, double[] w,
+                                            double[] yp, Sample XY,  double[] COST){
+        long startTime = System.nanoTime();
+
+        double cost =0;
+
+        double[] grad = new double[numDim];
+
+        for(int m=0;m<XY.getSize();m++) {
+            for (int d = 0; d < numDim; d++) {
+                if (XY.getLabel(m) * yp[m] - 1 < 0)
+                    grad[d] -= XY.getLabel(m) * XY.getFeature(m, d);
+            }
+
+            if (XY.getLabel(m) * yp[m] - 1 < 0) {
+                cost += (1 - XY.getLabel(m) * yp[m]);
+            }
+        }
+
+        if(f == 0 )
+            for(int d=0;d<numDim;d++) {
+                grad[d] += Math.abs(lambda * w[d]);
+                cost += 0.5*lambda*w[d]*w[d];
+            }
+
+        COST[0] = cost;
+
+        long estimatedTime = System.nanoTime() - startTime;
+        double seconds = (double)estimatedTime / 1000000000.0;
+        System.out.printf("[INFO] - partial_grad -> Time elapsed: %.4f seconds\n\n",seconds);
+
+        return  grad;
+    }
 
 
     public static Sample loadfileFromHDFS(Block blk,  int numDim) {
@@ -33,9 +87,8 @@ public class SVMHDFS {
             StringTokenizer tokenizer;
 
             int index=0;
-            int readed = 0;
 
-            String lines[] = blk.getRecords();
+            String lines[] = blk.getRecords('\n');
             while(index<lines.length){
 
                 if(index%10000 == 0 )
@@ -81,52 +134,6 @@ public class SVMHDFS {
     }
 
 
-    public static void  calc_yp( Sample XY, double[] w, int numDim, double[] COST, Sample s){
-
-        long startTime = System.nanoTime();
-
-        double[] ypp = new double[XY.getSize()];
-        double cost =0;
-
-        for(int m=0;m<XY.getSize();m++){  //for all elements of the block
-            ypp[m] = 0;
-            for(int d=0;d<numDim;d++) {
-                ypp[m] += XY.getFeature(m, d) * w[d];
-            }
-
-            if (XY.getLabel(m) * ypp[m] - 1 < 0) {
-                cost += (1 - XY.getLabel(m) * ypp[m]);
-            }
-
-        }
-
-        s.addFeature(ypp);
-        COST[0] = cost;
-
-        long estimatedTime = System.nanoTime() - startTime;
-        double seconds = (double)estimatedTime / 1000000000.0;
-        System.out.printf("[INFO] - calc_yp-> Time elapsed: %.4f seconds\n\n",seconds);
-
-    }
-
-    public static void partial_grad(int numDim, Sample yp, Sample XY, double[] grad){
-        long startTime = System.nanoTime();
-
-        for (int d = 0; d < numDim; d++)
-            grad[d] = 0;
-
-        for(int m=0;m<XY.getSize();m++) {
-            for (int d = 0; d < numDim; d++) {
-                if (XY.getLabel(m) * yp.getFeature(0, m) - 1 < 0)
-                    grad[d] -= XY.getLabel(m) * XY.getFeature(m, d);
-            }
-        }
-
-        long estimatedTime = System.nanoTime() - startTime;
-        double seconds = (double)estimatedTime / 1000000000.0;
-        System.out.printf("[INFO] - partial_grad -> Time elapsed: %.4f seconds\n\n",seconds);
-    }
-
     public static void  updateWeight(double lr, double[] grad_p,double [] w){
 
         for(int d=0;d<w.length;d++){
@@ -136,21 +143,27 @@ public class SVMHDFS {
     }
 
 
+    public static void accumulateCostAndGrad(double[] grad, double[] grad2,
+                                             double[] COST, double[] COST2){
+        for(int d=0;d<grad2.length;d++)
+            grad[d] +=grad2[d];
 
-    public static Sample predict_chunck(Sample XY, double[] w){
+        COST[0] += COST2[0];
+    }
+
+
+    public static ArrayList<Integer> predict_chunck(Sample XY, double[] w){
         long startTime = System.nanoTime();
 
         ArrayList<Integer> r = new ArrayList<Integer>();
         for(int i=0;i<XY.getSize();i++)	{
             r.add( predict(XY.getFeatureAll(i), w));
         }
-        Sample s = new Sample();
-        s.setLabels(r);
 
         double seconds = (double)(System.nanoTime() - startTime)/ 1000000000.0;
         System.out.printf("[INFO] - predict_chunck -> Time elapsed: %.4f seconds\n\n",seconds);
 
-        return s;
+        return r;
     }
 
     public static int predict(double[] x, double[] w){
@@ -163,40 +176,20 @@ public class SVMHDFS {
         else return -1;
     }
 
-    public static void accumulate_error(int[] ACC,int[] ACC2){
 
-        for(int f=0; f<ACC2.length;f++)
-            ACC[f] += ACC2[f];
+    //savePredictionToFile: to save the predicition in a file
+    public static void savePredictionToHDFS(ArrayList<Integer> result, String defaultFS, String filename){
+        HDFS dfs = new HDFS(defaultFS);
 
-    }
-
-    public static void accumulate_cost(double[] COST, double[] COST2){
-        //for(int f=0; f<COST2.length;f++)
-        COST[0] += COST2[0];
-
-    }
-
-    public static void accumulate_grad(double[] grad, double[] grad2){
-        for(int d=0;d<grad2.length;d++)
-            grad[d] +=grad2[d];
-    }
-
-    public static void verify (Sample labels_result, Sample test, int[] ACC){
-        int error=0;
-        int total = 0;
-        for(int i=0;i<test.getSize();i++)	{
-            total++;
-            if(labels_result.getLabel(i)!=test.getLabel(i))
-                error++;
+        String file1 = "";
+        for (int i = 0; i < result.size(); i++) {
+            int tmp = result.get(i);
+            if (tmp != 0)
+                file1 +=tmp+"\n";
         }
-
-        ACC[0] = error;
-        ACC[1] = total;
-
+        dfs.writeFILE(file1,defaultFS+filename,false);
+        System.out.println("File "+filename+" saved");
     }
-
-
-
 
 
     public static void main(String[] args) throws IOException{
@@ -209,7 +202,10 @@ public class SVMHDFS {
 
         String trainFile = "";
         String testFile =  "";
-        int numDim = 28;
+        String path_output = "";
+        int numDim  = 0;
+        int numFrag = 0;
+        Boolean force_split = false;
 
         //SVM's parameters
         double lambda = 0.001;      // Coefficient for Penalty part  (regularization parameter) -> 0 to +inf
@@ -236,6 +232,12 @@ public class SVMHDFS {
             }else if (arg.equals("-v")) {
                 testFile = args[argIndex++];
             }
+            else if (arg.equals("-f")) {
+                numFrag = Integer.parseInt(args[argIndex++]);
+            }else if (arg.equals("-out")) {
+                force_split=true;
+                path_output = args[argIndex++];
+            }
         }
 
         System.out.println("Running SVM.HDFS with the following parameters:");
@@ -245,27 +247,32 @@ public class SVMHDFS {
         System.out.println("- Iterations: " + maxIters);
         System.out.println("- Dimensions: " + numDim);
         System.out.println("- Train Points: " + trainFile);
-        System.out.println("- Test Points: " + testFile+"\n");
+        System.out.println("- Test Points: " + testFile);
+        System.out.println("- Output path: " + path_output+"\n");
 
 
         //Finding the list of blocks
         String defaultFS = System.getenv("MASTER_HADOOP_URL");
         HDFS dfs =  new HDFS(defaultFS);
-        ArrayList<Block> FILE_TRAIN_SPLITS = dfs.findALLBlocks(trainFile);
-        ArrayList<Block> FILE_TEST_SPLITS  = dfs.findALLBlocks(testFile);
+        ArrayList<Block> FILE_TRAIN_SPLITS;
+        ArrayList<Block> FILE_TEST_SPLITS;
+        if (force_split) {
+            FILE_TRAIN_SPLITS = dfs.findBlocksByRecords(trainFile, numFrag);
+            FILE_TEST_SPLITS  = dfs.findBlocksByRecords(testFile, numFrag);
+        }else{
+            FILE_TRAIN_SPLITS = dfs.findALLBlocks(trainFile);
+            FILE_TEST_SPLITS = dfs.findALLBlocks(testFile);
+        }
 
         int numFrag1 = FILE_TRAIN_SPLITS.size();
         int numFrag2 = FILE_TEST_SPLITS.size();
 
         Sample[] train = new Sample[numFrag1];
-        Sample[] test  = new Sample[numFrag2];
-
 
         for(int f=0; f<numFrag1;f++)
             train[f] = loadfileFromHDFS(FILE_TRAIN_SPLITS.get(f), numDim);
 
-        for(int f=0; f<numFrag2;f++)
-            test[f] = loadfileFromHDFS(FILE_TEST_SPLITS.get(f), numDim);
+
 
 
         /*########################################
@@ -277,18 +284,14 @@ public class SVMHDFS {
 
         double[]        w = new double[numDim];
         double[][] grad_p = new double[numFrag1][numDim];
-        Sample[]       yp = new Sample[numFrag1];
         double[][]   COST = new double[numFrag1][2];
-        int   [][]    ACC = new int[numFrag2][2];
+
 
         for(int iter=0;iter<maxIters;iter++){
 
-            //Calc yp
             for (int f=0;f<numFrag1;f++) {
-                yp[f] = new Sample();
-                yp[f].start();
-                calc_yp(train[f], w, numDim, COST[f], yp[f]);
-                partial_grad(numDim,  yp[f],  train[f], grad_p[f]);
+                double[] yp = calc_yp(train[f], w, numDim );
+                grad_p[f] = calc_CostAndGrad(numDim,f, lambda,w,  yp,  train[f], COST[f] );
             }
 
             //Accumulate gradient and cost
@@ -296,8 +299,7 @@ public class SVMHDFS {
             int i = 0;
             int gap = 1;
             while (size > 1) {
-                accumulate_grad(grad_p[i], grad_p[i + gap]);
-                accumulate_cost(COST[i],   COST[i + gap]);
+                accumulateCostAndGrad(grad_p[i], grad_p[i + gap], COST[i],   COST[i + gap]);
                 size--;
                 i = i + 2 * gap;
                 if (i == numFrag1) {
@@ -307,13 +309,10 @@ public class SVMHDFS {
             }
 
 
-            for(int d=0;d<numDim;d++) {
-                grad_p[0][d] += Math.abs(lambda * w[d]);
-                COST[0][0] += 0.5*lambda*w[d]*w[d];
-            }
 
             System.out.println("[INFO] - Current Cost: "+ COST[0][0]);
             if(COST[0][0]< threshold){
+                System.out.println("[INFO] - Final Cost: "+ COST[0][0]);
                 break;
             }
 
@@ -328,46 +327,18 @@ public class SVMHDFS {
 
          ########################################*/
 
-        int error=0;
-        Sample[] labels_result = new Sample[numFrag2];
-        //Parallel
+        Sample[] test  = new Sample[numFrag2];
+
+        for(int f=0; f<numFrag2;f++)
+            test[f] = loadfileFromHDFS(FILE_TEST_SPLITS.get(f), numDim);
+
+
         for (int f =0; f<numFrag2;f++) {
-            labels_result[f] = predict_chunck(test[f], w);
-            verify(labels_result[f], test[f], ACC[f]);
+            ArrayList<Integer> labels_result = predict_chunck(test[f], w);
+            savePredictionToHDFS(labels_result,defaultFS,path_output+"/Result-SVM_HDFS_"+f+".out");
 
         }
 
-        //Accumulate Error
-        int size = ACC.length;
-        int i = 0;
-        int gap = 1;
-        while (size > 1) {
-            accumulate_error(ACC[i], ACC[i + gap]);
-            size--;
-            i = i + 2 * gap;
-            if (i == ACC.length) {
-                gap *= 2;
-                i = 0;
-            }
-        }
-
-        System.out.println("Total Length:"+ACC[0][1]);
-        System.out.println("Error:"+ACC[0][0]);
-        System.out.println("Error rate:"+((double)ACC[0][0]/ACC[0][1]));
-        System.out.println("Acc rate:"+((double)(ACC[0][1]-ACC[0][0])/ACC[0][1]));
-
-        /*
-
-            cost:100000.0
-            cost:395456.9721037722
-            cost:3910008.9329382903
-            Iters:3
-            total:100000
-            error:47166
-            error rate:0.47166
-            acc rate:0.52834
-
-         */
 
     }
 

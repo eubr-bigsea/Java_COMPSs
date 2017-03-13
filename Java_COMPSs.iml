@@ -9,15 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library name="Maven: compss-engine:compss-engine:1.0">
-        <CLASSES>
-          <root url="jar:///opt/COMPSs/Runtime/compss-engine.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="Maven: es.bsc.compss:compss-api:2.0" level="project" />
     <orderEntry type="library" name="Maven: HDFS_Integration:HDFS_Integration:1.0" level="project" />
   </component>
 </module>
