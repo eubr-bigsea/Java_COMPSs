@@ -2,6 +2,7 @@
 
 Some algorithms developed in Java COMPSs with or without using the [HDFS's API](https://github.com/eubr-bigsea/compss-hdfs) developed in this project.
 
+## This repository is deprecated! The new repository is available in: https://github.com/eubr-bigsea/compss-library
 
 -----
 In this repository there are the following algorithms:
